@@ -19,3 +19,6 @@ Your program will show a 2D scene similar to the example at https://harviu.githu
 * Each of Translation, Scaling, and Rotation should be correctly implemented and used at least once. (1 point)
 * Transformations are bound to user input and interaction. (1 point)
 * Creativity and aesthetics. (1 point)
+
+### Optional Tasks
+* Make objects scale based off of 
