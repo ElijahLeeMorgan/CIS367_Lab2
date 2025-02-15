@@ -160,6 +160,13 @@ function setSpikeyCircle (radius=50, segments=32) {
     )
 }
 
+// Jackpot! SVG to points converter. Also text to points.
+// https://shinao.github.io/PathToPoints/
+// Free for Personal Use Font
+// https://www.dafont.com/dancefloor-exit.font
+
+// setManSpinPoints();
+
 // Start borrowed code
 function drawObject(positions, mMatrix, color) {
     const buffer = gl.createBuffer();
