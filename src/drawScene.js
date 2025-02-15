@@ -129,15 +129,13 @@ function drawObject(positions, mMatrix, color) {
 // End Borrowed Code
 
 function drawBass(parentMatrix, level, x=0, y=0, rotation=45, dx=level, dy=level, width=100, height=100) {
-    const vBass = setRectangle(width, height);
-    var offsetX = dx + 0.05;
-    var offsetY = dy + 0.05;
-    const bassColor = [0.8, 0.2, 0.4, Math.sin(offsetX * Math.PI)];
+    const vBass = setRectangle(height, width);
+    const bassColor = [0.8, 0, 0, Math.sin(bass * Math.PI)];
     
     // Set translation, scaling, and rotation matrices.
-    var rotateM = setRotationMatrix(level * rotation); //TODO Adjust with time
+    var rotateM = setRotationMatrix(rotation);
     var translateM = setTranslationMatrix(x, y);
-    var scaleM = setScalingMatrix(offsetX, offsetY);
+    var scaleM = setScalingMatrix(dx, dy);
 
     // Combine the translation, scaling, and rotation matrices.
 
@@ -151,17 +149,21 @@ function drawBass(parentMatrix, level, x=0, y=0, rotation=45, dx=level, dy=level
     return bassmMatrix;
 }
 
-function drawMid(parentMatrix, level) {
+function drawMid(parentMatrix, level, x=0, y=0, rotation=45, dx=level, dy=level, width=100, height=100) {
 
 }
 
-function drawTreble(parentMatrix, level) {
+function drawTreble(parentMatrix, level, x=0, y=0, rotation=45, dx=level, dy=level, width=100, height=100) {
 
 }
 
 function drawAll(parentMatrix=setIdentityMatrix(), bass=0.1, mid=0.1, treble=0.1) {
-    e = drawBass(parentMatrix, bass);
-    drawBass(multiplyMatrix3x3(e, setRotationMatrix(180)), bass);
+    // parentMatrix, level, x=0, y=0, rotation=45, dx=level, dy=level, width=100, height=100
+    drawBass(parentMatrix, bass, 0, 0, 0, bass, bass, 200, 200);
+    drawBass(parentMatrix, bass, 0, 0, 90, 1-bass, 1-bass, 200, 200);
+    drawBass(parentMatrix, bass, 0, 0, 180, bass, bass, 200, 200);
+    drawBass(parentMatrix, bass, 0, 0, 270, 1-bass, 1-bass, 200, 200);
+    
     
 }
 
@@ -225,9 +227,9 @@ function drawLoop() {
     const centerMatrix = multiplyMatrix3x3(setIdentityMatrix(), setTranslationMatrix(canvas.width / 4, canvas.height / 4));
 
     // Update the bass, mid, and treble values from the DOM
-    bass = parseFloat(document.getElementById('bass').textContent) * 10;
-    mid = parseFloat(document.getElementById('mid').textContent);
-    treble = parseFloat(document.getElementById('treble').textContent);
+    bass = parseFloat(document.getElementById('bass').textContent) * 2.5;
+    mid = parseFloat(document.getElementById('mid').textContent) * 2.5;
+    treble = parseFloat(document.getElementById('treble').textContent) * 2.5;
 
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(0, 0, 0, 1);
@@ -243,6 +245,3 @@ function drawLoop() {
 gl.viewport(0, 0, canvas.width, canvas.height);
 gl.clearColor(0, 0, 0, 1);
 gl.clear(gl.COLOR_BUFFER_BIT);
-
-// Initial positions, draws defaults.
-drawAll();
