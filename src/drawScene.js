@@ -238,9 +238,12 @@ function drawAll(parentMatrix=setIdentityMatrix(), bass=0.1, mid=0.1, treble=0.1
     const invertRadius = 10000;
     const invertSegments = 32;
     const invertMidSize = squareSize / 2;
-    m1 = drawMid(b1, mid, 0, invertMidSize / -4, -11.25, 1, 1, invertRadius, invertSegments);
+
+    // Make rotation more apparent/snappy.
+    if (mid < 0.25) mid = 0.0;
+    m1 = drawMid(b1, mid, 0, invertMidSize / -4, -16.875, 1, 1, invertRadius, invertSegments);
     // Rotated backwards to compensate for vertex order.
-    m2 = drawMid(b3, mid, 0, invertMidSize / 4, 11.25, 1, 1, invertRadius, invertSegments);
+    m2 = drawMid(b3, mid, 0, invertMidSize / 4, 16.875, 1, 1, invertRadius, invertSegments);
 
     const spikeRadius = 10000;
     const spikeSegments = 32;

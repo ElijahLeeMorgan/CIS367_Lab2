@@ -3,11 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interaction</title>
+    <title>Audio Visualizer</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            color: beige;
+            background-color: black;
+        }
+    </style>
 </head>
 <body>
+    <h1>Audio Visualizer.</h1>
+    <p>A project by Elijah Morgan</p>
     <canvas id="webgl-canvas" width="500" height="500"></canvas>
-    <p>Insert audio file to begin.</p>
+    <h2 style="color: red;">EPILESPY WARNING! BRIGHT FLASHING LIGHTS!</h2>
     <!-- Start AI Code -->
     <div id="audioControls">
         <input type="file" id="audioFile" accept="audio/*" />
@@ -16,11 +30,28 @@
     </div>
     <div>
         <h3>Audio Metrics:</h3>
-        <p>RMS Volume: <span id="rmsVolume"></span></p>
-        <p>Bass Level (0-250Hz): <span id="bass"></span></p>
-        <p>Mid Level (250-4kHz): <span id="mid"></span></p>
-        <p>Treble Level (4kHz+): <span id="treble"></span></p>
-        <p>Waveform Min/Max: <span id="waveform"></span></p>
+        <table>
+            <tr>
+                <td>RMS Volume:</td>
+                <td><span id="rmsVolume"></span></td>
+            </tr>
+            <tr>
+                <td>Bass Level (0-250Hz):</td>
+                <td><span id="bass"></span></td>
+            </tr>
+            <tr>
+                <td>Mid Level (250-4kHz):</td>
+                <td><span id="mid"></span></td>
+            </tr>
+            <tr>
+                <td>Treble Level (4kHz+):</td>
+                <td><span id="treble"></span></td>
+            </tr>
+            <tr>
+                <td>Waveform Min/Max:</td>
+                <td><span id="waveform"></span><t></t></td>
+            </tr>
+        </table>
     </div>
     <!-- End AI Code -->
 <script type="text/javascript" src="audioAnalysis.js"></script>
