@@ -1,7 +1,7 @@
 // Matrix funcitons borrowed from soldier.html at https://github.com/harviu/WebGL-Example/blob/master/html/soldier.html
 // As mentioned in the following article, this is one of the fastest ways to do this for small matricies: https://dev.to/ndesmic/fast-matrix-math-in-js-11cj
 // So there's no good reason to change this code.
-// Borrowed code
+// Start Borrowed code
 function setIdentityMatrix () {
     return new Float32Array([
         1,0,0,
@@ -59,7 +59,60 @@ function setRectangle (width, height) {
         width, 0, 0, height, width, height,
     ])
 }
+// End Borrowed Code
 
+// Ripped from my Lab1 code, AI Assisted Code
+function genCirclePoints(x, y, radius, numPoints, thetaOffset) {
+    if (numPoints < 3 || radius <= 0) {
+        return [];
+    }
+
+    const points = [];
+    for (let i = 0; i < numPoints; i++) {
+        const angle = ((Math.PI * 2 * i) / (numPoints) + thetaOffset);
+        const px = x + Math.cos(angle) * radius;
+        const py = y + Math.sin(angle) * radius;
+        points.push(px, py);
+    }
+    return points;
+}
+// End AI Assisted Code
+
+function setCircle (radius=50, segments=32) {
+    return new Float32Array(
+        genCirclePoints(0, 0, radius, segments, 0)
+    )
+}
+
+function genSpikeyCirclePoints(x, y, radius, numPoints, thetaOffset) {
+    // Antipattern, I know. This isn
+    if (numPoints < 3 || radius <= 0) {
+        return [];
+    }
+
+    const points = [];
+    for (let i = 0; i < numPoints; i++) {
+        if (i % 2 == 0) {
+            radius = radius * 0.5;
+        }
+        else {
+            radius = radius * 0.8;
+        }
+        const angle = ((Math.PI * 2 * i) / (numPoints) + thetaOffset);
+        const px = x + Math.cos(angle) * radius;
+        const py = y + Math.sin(angle) * radius;
+        points.push(px, py);
+    }
+    return points;
+}
+
+function setSpikeyCircle (radius=50, segments=32) {
+    return new Float32Array(
+        genSpikeyCirclePoints(0, 0, radius, segments, 0)
+    )
+}
+
+// Start borrowed code
 function drawObject(positions, mMatrix, color) {
     const buffer = gl.createBuffer();
 
@@ -75,6 +128,42 @@ function drawObject(positions, mMatrix, color) {
 }
 // End Borrowed Code
 
+function drawBass(parentMatrix, level, x=0, y=0, rotation=45, dx=level, dy=level, width=100, height=100) {
+    const vBass = setRectangle(width, height);
+    var offsetX = dx + 0.05;
+    var offsetY = dy + 0.05;
+    const bassColor = [0.8, 0.2, 0.4, Math.sin(offsetX * Math.PI)];
+    
+    // Set translation, scaling, and rotation matrices.
+    var rotateM = setRotationMatrix(level * rotation); //TODO Adjust with time
+    var translateM = setTranslationMatrix(x, y);
+    var scaleM = setScalingMatrix(offsetX, offsetY);
+
+    // Combine the translation, scaling, and rotation matrices.
+
+    var fullTransformationMatrix = multiplyMatrix3x3(translateM, rotateM);
+    fullTransformationMatrix = multiplyMatrix3x3(fullTransformationMatrix, scaleM);
+    fullTransformationMatrix = multiplyMatrix3x3(parentMatrix, fullTransformationMatrix);
+    
+
+    var bassmMatrix = multiplyMatrix3x3(parentMatrix, fullTransformationMatrix);
+    drawObject(vBass, bassmMatrix, bassColor);
+    return bassmMatrix;
+}
+
+function drawMid(parentMatrix, level) {
+
+}
+
+function drawTreble(parentMatrix, level) {
+
+}
+
+function drawAll(parentMatrix=setIdentityMatrix(), bass=0.1, mid=0.1, treble=0.1) {
+    e = drawBass(parentMatrix, bass);
+    drawBass(multiplyMatrix3x3(e, setRotationMatrix(180)), bass);
+    
+}
 
 /*
 function drawSoldier(parentMatrix) {
@@ -128,50 +217,32 @@ const pMatrix = [
 ]
 gl.uniformMatrix3fv(pMatrixLocation, false, pMatrix);
 
-let bass = parseFloat(document.getElementById('bass').textContent);
-let mid = parseFloat(document.getElementById('mid').textContent);
-let treble = parseFloat(document.getElementById('treble').textContent);
+document.getElementById('playButton').addEventListener('click', () => {
+    requestAnimationFrame(drawLoop);
+});
 
-/*
-let globalX = 0, globalY = 0;
-let armAngle = 0, swordAngle = 0;
+function drawLoop() {
+    const centerMatrix = multiplyMatrix3x3(setIdentityMatrix(), setTranslationMatrix(canvas.width / 4, canvas.height / 4));
 
-// listening to the key events
-document.addEventListener('keydown', (e)=>{
-    if (e.key == 'w'){
-        globalY += 10;
-    }
-    else if (e.key == 's'){
-        globalY -= 10;
-    }
-    else if (e.key == 'a'){
-        globalX -= 10;
-    }
-    else if (e.key == 'd'){
-        globalX += 10;
-    }
-    else if (e.key == 'ArrowLeft'){
-        armAngle += 10;
-    }
-    else if (e.key == 'ArrowRight'){
-        armAngle -= 10;
-    }
-    else if (e.key == 'ArrowUp'){
-        swordAngle += 10;
-    }
-    else if (e.key == 'ArrowDown'){
-        swordAngle -= 10;
-    }
+    // Update the bass, mid, and treble values from the DOM
+    bass = parseFloat(document.getElementById('bass').textContent) * 10;
+    mid = parseFloat(document.getElementById('mid').textContent);
+    treble = parseFloat(document.getElementById('treble').textContent);
+
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(0, 0, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    drawSoldier(setTranslationMatrix(globalX, globalY));
-}, false);
-*/
+    // Draw the bass rectangle with the updated scaling
+    // Optional, input parent matrix.
+    drawAll(centerMatrix, bass, mid, treble);
+
+    requestAnimationFrame(drawLoop);
+}
 
 gl.viewport(0, 0, canvas.width, canvas.height);
 gl.clearColor(0, 0, 0, 1);
 gl.clear(gl.COLOR_BUFFER_BIT);
 
-//drawSoldier(setIdentityMatrix())
+// Initial positions, draws defaults.
+drawAll();
