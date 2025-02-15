@@ -107,7 +107,7 @@ function setInvertedSpikeyCircle (radius=100, segments=32) {
     return new Float32Array(
         genInvertedSpikeyCircle(0, 0, radius, segments, 0)
     )
-}S
+}
 
 // Ripped from my Lab1 code, AI Assisted Code
 function genCirclePoints(x, y, radius, numPoints, thetaOffset) {
@@ -181,12 +181,13 @@ function drawObject(positions, mMatrix, color) {
 // Looking back, I couldvvve made my modififcations outside of a generic fuunction. Oh well.
 function drawBass(parentMatrix, level, x=0, y=0, rotation=45, dx=level, dy=level, width=100, height=100) {
     const points = setRectangle(height, width);
-    const color = [0.8, 0, 0, Math.sin(level * Math.PI)];
+    
+    const color = [1, 0, 0, 1 - Math.cos(level * Math.PI)];
     
     // Set translation, scaling, and rotation matrices.
-    var rotateM = setRotationMatrix(rotation);
-    var translateM = setTranslationMatrix(x, y);
-    var scaleM = setScalingMatrix(dx, dy);
+    const rotateM = setRotationMatrix(rotation);
+    const translateM = setTranslationMatrix(x, y);
+    const scaleM = setScalingMatrix(dx, dy);
 
     // Combine the translation, scaling, and rotation matrices.
 
@@ -194,21 +195,21 @@ function drawBass(parentMatrix, level, x=0, y=0, rotation=45, dx=level, dy=level
     fullTransformationMatrix = multiplyMatrix3x3(fullTransformationMatrix, scaleM);
     fullTransformationMatrix = multiplyMatrix3x3(parentMatrix, fullTransformationMatrix);
     
-
-    var finishedm = multiplyMatrix3x3(parentMatrix, fullTransformationMatrix);
+    const finishedm = multiplyMatrix3x3(parentMatrix, fullTransformationMatrix);
     drawObject(points, finishedm, color);
     return finishedm;
 }
 
 function drawMid(parentMatrix, level, x=0, y=0, rotation=45, dx=level, dy=level, radius=100, segments=32) {
     const points = setInvertedSpikeyCircle(radius, segments);
-    const color = [0, 0, 0.8, 0.7 - Math.cos(level * Math.PI)];
+    const smoothedLevel = Math.cos(level * Math.PI);
+    const color = [smoothedLevel, smoothedLevel, smoothedLevel, 1];
     
     // Set translation, scaling, and rotation matrices.
     rotation = rotation * level + (360/segments);
-    var rotateM = setRotationMatrix(rotation);
-    var translateM = setTranslationMatrix(x, y);
-    var scaleM = setScalingMatrix(dx, dy);
+    const rotateM = setRotationMatrix(rotation);
+    const translateM = setTranslationMatrix(x, y);
+    const scaleM = setScalingMatrix(dx, dy);
 
     // Combine the translation, scaling, and rotation matrices.
 
@@ -217,7 +218,7 @@ function drawMid(parentMatrix, level, x=0, y=0, rotation=45, dx=level, dy=level,
     fullTransformationMatrix = multiplyMatrix3x3(parentMatrix, fullTransformationMatrix);
     
 
-    var finishedm = multiplyMatrix3x3(parentMatrix, fullTransformationMatrix);
+    const finishedm = multiplyMatrix3x3(parentMatrix, fullTransformationMatrix);
     drawObject(points, finishedm, color);
     return finishedm;
 }
@@ -248,11 +249,11 @@ function drawAll(parentMatrix=setIdentityMatrix(), bass=0.1, mid=0.1, treble=0.1
     m2 = drawMid(b3, mid, 0, invertMidSize / 4, 16.875, 1, 1, invertRadius, invertSegments);
 
     const spikeRadius = 10000;
-    const spikeSegments = 32;
-    const spikeMidSize = invertMidSize / 2;
+    const spikeSegments = 4;
     //parentMatrix, level, x=0, y=0, rotation=45, dx=level, dy=level, radius=100, segments=32
-    drawTreble(m1, treble, 0, invertMidSize / -4, invertMidSize / -4, 1, 1, invertRadius, invertSegments);
-    drawTreble(m2, -treble, 0, invertMidSize / 4, invertMidSize / 4, 1, 1, invertRadius, invertSegments);
+    drawTreble(m1, treble, -treble, treble, 0, 1 - treble * 2, 1, spikeRadius, spikeSegments);
+    drawTreble(m2, treble, treble, -treble, 0, 1, 1 - treble * 2, spikeRadius, spikeSegments);
+
 }
 
 // initialize buffer and Location
@@ -296,7 +297,7 @@ function drawLoop() {
 }
 
 gl.viewport(0, 0, canvas.width, canvas.height);
-gl.clearColor(0, 0, 0, 1);
+gl.clearColor(1, 1, 1, 1);
 gl.clear(gl.COLOR_BUFFER_BIT);
 
 drawAll(centerMatrix, 0, 0, 0);
