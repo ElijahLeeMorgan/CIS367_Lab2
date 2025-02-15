@@ -93,7 +93,7 @@ function genInvertedSpikeyCircle(x, y, radius, numPoints, thetaOffset) {
     }
 
     const points = [];
-    for (let i = 0; i < numPoints; i++) {
+    for (let i = 0; i <= numPoints; i++) {
         const angle = ((Math.PI * 2 * i) / (numPoints) + thetaOffset);
         const px = x + Math.cos(angle) * radius;
         const py = y + Math.sin(angle) * radius;
@@ -107,7 +107,7 @@ function setInvertedSpikeyCircle (radius=100, segments=32) {
     return new Float32Array(
         genInvertedSpikeyCircle(0, 0, radius, segments, 0)
     )
-}
+}S
 
 // Ripped from my Lab1 code, AI Assisted Code
 function genCirclePoints(x, y, radius, numPoints, thetaOffset) {
@@ -139,7 +139,7 @@ function genSpikeyCirclePoints(x, y, radius, numPoints, thetaOffset) {
     }
 
     const points = [];
-    for (let i = 0; i < numPoints; i++) {
+    for (let i = 0; i <= numPoints; i++) {
         if (i % 2 == 0) {
             radius = radius * 0.5;
         }
@@ -202,7 +202,7 @@ function drawBass(parentMatrix, level, x=0, y=0, rotation=45, dx=level, dy=level
 
 function drawMid(parentMatrix, level, x=0, y=0, rotation=45, dx=level, dy=level, radius=100, segments=32) {
     const points = setInvertedSpikeyCircle(radius, segments);
-    const color = [0, 0, 0.8, 1.0 - Math.cos(level * Math.PI)];
+    const color = [0, 0, 0.8, 0.7 - Math.cos(level * Math.PI)];
     
     // Set translation, scaling, and rotation matrices.
     rotation = rotation * level + (360/segments);
@@ -236,11 +236,13 @@ function drawAll(parentMatrix=setIdentityMatrix(), bass=0.1, mid=0.1, treble=0.1
     
     //parentMatrix, level, x=0, y=0, rotation=45, dx=level, dy=level, radius=100, segments=32
     const invertRadius = 10000;
-    const invertSegments = 32;
+    const invertSegments = 64;
     const invertMidSize = squareSize / 2;
 
     // Make rotation more apparent/snappy.
-    if (mid < 0.25) mid = 0.0;
+    if (mid < 0.1) {
+        mid = 0.0;
+    }
     m1 = drawMid(b1, mid, 0, invertMidSize / -4, -16.875, 1, 1, invertRadius, invertSegments);
     // Rotated backwards to compensate for vertex order.
     m2 = drawMid(b3, mid, 0, invertMidSize / 4, 16.875, 1, 1, invertRadius, invertSegments);
